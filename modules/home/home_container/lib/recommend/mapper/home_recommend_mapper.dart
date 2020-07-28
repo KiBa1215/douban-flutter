@@ -23,12 +23,24 @@ class HomeRecommendFeedMapper {
       }
     }
 
+    // 配图
+    var photos;
+    try {
+      photos = item.content.photos
+          .where((element) => element.image.normal.url.isNotEmpty)
+          .map((e) => e.image.normal.url)
+          .toList();
+    } catch (e) {
+      photos = List<String>();
+    }
+
     return RecommendFeedItemModel.name(
       avatar,
       authorName,
       item.type,
       item.topic,
-      item.content
+      item.content,
+      photos,
     );
   }
 }

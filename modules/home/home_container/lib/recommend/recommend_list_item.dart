@@ -6,6 +6,7 @@ class RecommendFeedItemModel {
   String authorName;
   ItemTopic topic;
   Content content;
+  List<String> photos;
 
   RecommendFeedItemModel.name(
     this.avatarUrl,
@@ -13,6 +14,7 @@ class RecommendFeedItemModel {
     this.articleType,
     this.topic,
     this.content,
+    this.photos,
   );
 }
 
@@ -44,6 +46,7 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
           _headerItem(item),
           _topicItem(item),
           _bodyItem(item),
+          _imagesItem(item),
         ],
       ),
     );
@@ -163,7 +166,28 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
     );
   }
 
+  /// 图片
   Widget _imagesItem(RecommendFeedItemModel item) {
-
+    final images = List<Widget>();
+    for (var url in item.photos) {
+      final widget = Container(
+        margin: EdgeInsets.fromLTRB(0, 0, 4, 4),
+        color: Theme.of(context).backgroundColor,
+        child: ClipRRect(
+          borderRadius: BorderRadius.all(Radius.circular(4)),
+          child: Image.network(
+            url,
+            width: 120,
+            height: 120,
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+      images.add(widget);
+    }
+    return Wrap(
+      children: images,
+      crossAxisAlignment: WrapCrossAlignment.start,
+    );
   }
 }

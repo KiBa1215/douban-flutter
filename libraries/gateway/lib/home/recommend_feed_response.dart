@@ -76,7 +76,7 @@ class RecommendItem {
   bool showActions;
   ItemTopic topic;
   dynamic createdTime;
-  dynamic actionInfo;
+  ActionInfo actionInfo;
   int collectionsCount;
   Owner owner;
   int resharesCount;
@@ -106,7 +106,7 @@ class RecommendItem {
     showActions: json["show_actions"],
     topic: json["topic"] == null ? null : ItemTopic.fromJson(json["topic"]),
     createdTime: json["created_time"],
-    actionInfo: json["action_info"],
+    actionInfo: json["action_info"] == null ? null : ActionInfo.fromJson(json["action_info"]),
     collectionsCount: json["collections_count"],
     owner: json["owner"] == null ? null : Owner.fromJson(json["owner"]),
     resharesCount: json["reshares_count"],
@@ -116,7 +116,7 @@ class RecommendItem {
     content: Content.fromJson(json["content"]),
     isCollected: json["is_collected"],
     typeCn: json["type_cn"],
-    type: json["type"],
+    type: json["type"] == null ? null : contentTypeValues.map[json["type"]],
     reactionType: json["reaction_type"],
     subjectCard: json["subject_card"],
     recInfo: json["rec_info"] == null ? null : RecInfo.fromJson(json["rec_info"]),
@@ -137,7 +137,7 @@ class RecommendItem {
     "show_actions": showActions,
     "topic": topic == null ? null : topic.toJson(),
     "created_time": createdTime,
-    "action_info": actionInfo,
+    "action_info": actionInfo == null ? null : actionInfo.toJson(),
     "collections_count": collectionsCount,
     "owner": owner == null ? null : owner.toJson(),
     "reshares_count": resharesCount,
@@ -161,6 +161,30 @@ class RecommendItem {
     "comments_count": commentsCount,
     "owner_alter_label": ownerAlterLabel,
     "ad_info": adInfo == null ? null : adInfo.toJson(),
+  };
+}
+
+class ActionInfo {
+  ActionInfo({
+    this.text,
+    this.uri,
+    this.icon,
+  });
+
+  String text;
+  String uri;
+  String icon;
+
+  factory ActionInfo.fromJson(Map<String, dynamic> json) => ActionInfo(
+    text: json["text"],
+    uri: json["uri"],
+    icon: json["icon"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "text": text,
+    "uri": uri,
+    "icon": icon,
   };
 }
 
@@ -272,12 +296,12 @@ class AdInfo {
   };
 }
 
-enum Uid { EMPTY, THE_39_C4_FA6314_A7_BC44_E80_B6_AF7_B1_A416_B2, THE_73_EA87_E10_B3_DE0399702_E5_CC94_BE1_E5_E }
+enum Uid { EMPTY, THE_50_A69_D0_F32377_A19_E1_C9_B867_D868861_A, THE_3110_C175_DE068_DB99_C8008_A6_FD1_D485_F }
 
 final uidValues = EnumValues({
   "": Uid.EMPTY,
-  "39c4fa6314a7bc44e80b6af7b1a416b2": Uid.THE_39_C4_FA6314_A7_BC44_E80_B6_AF7_B1_A416_B2,
-  "73ea87e10b3de0399702e5cc94be1e5e": Uid.THE_73_EA87_E10_B3_DE0399702_E5_CC94_BE1_E5_E
+  "3110c175de068db99c8008a6fd1d485f": Uid.THE_3110_C175_DE068_DB99_C8008_A6_FD1_D485_F,
+  "50a69d0f32377a19e1c9b867d868861a": Uid.THE_50_A69_D0_F32377_A19_E1_C9_B867_D868861_A
 });
 
 class AdOwner {
@@ -424,7 +448,7 @@ class Author {
   };
 }
 
-enum KindEnum { GROUP, USER }
+enum KindEnum { USER, GROUP }
 
 final kindEnumValues = EnumValues({
   "group": KindEnum.GROUP,
@@ -608,7 +632,7 @@ class Status {
   String uri;
   String miniProgramPage;
   dynamic parentStatus;
-  dynamic videoInfo;
+  VideoInfo videoInfo;
   int reactionsCount;
   int commentsCount;
   String miniProgramName;
@@ -650,13 +674,13 @@ class Status {
     uri: json["uri"],
     miniProgramPage: json["mini_program_page"],
     parentStatus: json["parent_status"],
-    videoInfo: json["video_info"],
+    videoInfo: json["video_info"] == null ? null : VideoInfo.fromJson(json["video_info"]),
     reactionsCount: json["reactions_count"],
     commentsCount: json["comments_count"],
     miniProgramName: json["mini_program_name"],
     isStatusAd: json["is_status_ad"],
     canTransferAccessible: json["can_transfer_accessible"],
-    hasRelatedContents: json["has_related_contents"],
+    hasRelatedContents: json["has_related_contents"] == null ? null : json["has_related_contents"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -693,13 +717,13 @@ class Status {
     "uri": uri,
     "mini_program_page": miniProgramPage,
     "parent_status": parentStatus,
-    "video_info": videoInfo,
+    "video_info": videoInfo == null ? null : videoInfo.toJson(),
     "reactions_count": reactionsCount,
     "comments_count": commentsCount,
     "mini_program_name": miniProgramName,
     "is_status_ad": isStatusAd,
     "can_transfer_accessible": canTransferAccessible,
-    "has_related_contents": hasRelatedContents,
+    "has_related_contents": hasRelatedContents == null ? null : hasRelatedContents,
   };
 }
 
@@ -830,6 +854,82 @@ class TailIcon {
   );
 
   Map<String, dynamic> toJson() => {
+  };
+}
+
+class VideoInfo {
+  VideoInfo({
+    this.playStatus,
+    this.description,
+    this.videoUrl,
+    this.url,
+    this.videoWatermarkUrl,
+    this.uri,
+    this.coverUrl,
+    this.previewUrl,
+    this.playCount,
+    this.videoHeight,
+    this.label,
+    this.alertText,
+    this.fileSize,
+    this.duration,
+    this.videoWidth,
+    this.id,
+  });
+
+  int playStatus;
+  String description;
+  String videoUrl;
+  String url;
+  String videoWatermarkUrl;
+  String uri;
+  String coverUrl;
+  String previewUrl;
+  int playCount;
+  int videoHeight;
+  String label;
+  String alertText;
+  int fileSize;
+  String duration;
+  int videoWidth;
+  String id;
+
+  factory VideoInfo.fromJson(Map<String, dynamic> json) => VideoInfo(
+    playStatus: json["play_status"],
+    description: json["description"],
+    videoUrl: json["video_url"],
+    url: json["url"],
+    videoWatermarkUrl: json["video_watermark_url"],
+    uri: json["uri"],
+    coverUrl: json["cover_url"],
+    previewUrl: json["preview_url"],
+    playCount: json["play_count"],
+    videoHeight: json["video_height"],
+    label: json["label"],
+    alertText: json["alert_text"],
+    fileSize: json["file_size"],
+    duration: json["duration"],
+    videoWidth: json["video_width"],
+    id: json["id"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "play_status": playStatus,
+    "description": description,
+    "video_url": videoUrl,
+    "url": url,
+    "video_watermark_url": videoWatermarkUrl,
+    "uri": uri,
+    "cover_url": coverUrl,
+    "preview_url": previewUrl,
+    "play_count": playCount,
+    "video_height": videoHeight,
+    "label": label,
+    "alert_text": alertText,
+    "file_size": fileSize,
+    "duration": duration,
+    "video_width": videoWidth,
+    "id": id,
   };
 }
 
