@@ -171,7 +171,7 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
     final images = List<Widget>();
     for (var url in item.photos) {
       final widget = Container(
-        margin: EdgeInsets.fromLTRB(0, 0, 4, 4),
+        margin: EdgeInsets.all(2),
         color: Theme.of(context).backgroundColor,
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(4)),
