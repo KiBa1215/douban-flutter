@@ -7,6 +7,9 @@ class RecommendFeedItemModel {
   ItemTopic topic;
   Content content;
   List<String> photos;
+  int reactionCount;
+  int commentCount;
+  int shareCount;
 
   RecommendFeedItemModel.name(
     this.avatarUrl,
@@ -15,6 +18,9 @@ class RecommendFeedItemModel {
     this.topic,
     this.content,
     this.photos,
+    this.reactionCount,
+    this.commentCount,
+    this.shareCount,
   );
 }
 
@@ -47,6 +53,7 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
           _topicItem(item),
           _bodyItem(item),
           _imagesItem(item),
+          _likeCommentSharingItems(item),
         ],
       ),
     );
@@ -209,5 +216,62 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
       );
     }
     return SizedBox.shrink(); // 空控件，不占空间，无需背景
+  }
+
+  /// 点赞 评论 转发
+  Widget _likeCommentSharingItems(RecommendFeedItemModel item) {
+    final items = [
+      {
+        'icon': Icons.thumb_up,
+        'count': item.reactionCount.toString(),
+        'color': Colors.black45
+      },
+      {
+        'icon': Icons.forum,
+        'count': item.commentCount.toString(),
+        'color': Colors.black45
+      },
+      {
+        'icon': Icons.share,
+        'count': item.reactionCount.toString(),
+        'color': Colors.black45
+      },
+    ];
+    List<Widget> buttons = List<Widget>();
+    for (var i = 0; i < 3; i++) {
+      buttons.add(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Icon(
+              items[i]['icon'],
+              color: items[i]['color'],
+              size: 24,
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(1, 0, 0, 0),
+              child: Text(
+                items[i]['count'] == null ? '' : items[i]['count'],
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    .copyWith(color: items[i]['color']),
+              ),
+            )
+          ],
+        ),
+      );
+    }
+    return Padding(
+      padding: EdgeInsets.fromLTRB(8, 32, 8, 8),
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: buttons,
+        ),
+      ),
+    );
   }
 }

@@ -16,6 +16,9 @@ class HomeRecommendFeedMapper {
       item.topic,
       item.content,
       photos,
+      item.reactionsCount,
+      item.commentsCount,
+      item.resharesCount,
     );
   }
 
