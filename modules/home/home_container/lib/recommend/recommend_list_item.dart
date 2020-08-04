@@ -121,11 +121,17 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
       margin: EdgeInsets.fromLTRB(0, 8, 0, 0),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(16)),
-          color: Color(int.parse(item.topic.topicLabelBgColor.replaceAll('#', ''), radix: 16)).withOpacity(1.0)),
+          color: Color(int.parse(
+            item.topic.topicLabelBgColor.replaceAll('#', ''),
+            radix: 16,
+          )).withOpacity(1.0)),
       child: Text(
         item.topic.name,
         style: Theme.of(context).textTheme.bodyText1.copyWith(
-            color: Color(int.parse(item.topic.topicLabelTextColor.replaceAll('#', ''), radix: 16)).withOpacity(1.0)),
+                color: Color(int.parse(
+              item.topic.topicLabelTextColor.replaceAll('#', ''),
+              radix: 16,
+            )).withOpacity(1.0)),
       ),
     );
   }
@@ -141,7 +147,10 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
     if (content.title != null) {
       titleSpan = TextSpan(
           text: content.title,
-          style: Theme.of(context).textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context)
+              .textTheme
+              .bodyText2
+              .copyWith(fontWeight: FontWeight.bold),
           children: <InlineSpan>[TextSpan(text: "  ")]);
     }
     // 正文
@@ -152,7 +161,11 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
         style: Theme.of(context).textTheme.bodyText2,
       );
     }
-    final spans = [titleSpan, abstractSpan].where((element) => element != null).toList();
+    final spans = [
+      titleSpan,
+      abstractSpan,
+    ].where((element) => element != null).toList();
+
     final richText = RichText(
       maxLines: 5,
       overflow: TextOverflow.clip,
@@ -171,23 +184,30 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
     final images = List<Widget>();
     for (var url in item.photos) {
       final widget = Container(
-        margin: EdgeInsets.all(2),
         color: Theme.of(context).backgroundColor,
         child: ClipRRect(
           borderRadius: BorderRadius.all(Radius.circular(4)),
           child: Image.network(
             url,
-            width: 120,
-            height: 120,
             fit: BoxFit.cover,
           ),
         ),
       );
       images.add(widget);
     }
-    return Wrap(
-      children: images,
-      crossAxisAlignment: WrapCrossAlignment.start,
-    );
+    if (images.isNotEmpty) {
+      return GridView(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          childAspectRatio: 1,
+          mainAxisSpacing: 2,
+          crossAxisSpacing: 2,
+        ),
+        children: images,
+        shrinkWrap: true, //
+        physics: NeverScrollableScrollPhysics(), // 无法滚动
+      );
+    }
+    return SizedBox.shrink(); // 空控件，不占空间，无需背景
   }
 }
