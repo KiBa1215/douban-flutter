@@ -3,7 +3,7 @@ library theme;
 import 'package:flutter/material.dart';
 
 var defaultTheme = ThemeData(
-  accentColor: Color.fromARGB(255, 48, 44, 45),
+  accentColor: Color.fromARGB(255, 29, 189, 92),
   backgroundColor: Colors.grey.shade100,
   primaryColor: Colors.white,
   textTheme: TextTheme(

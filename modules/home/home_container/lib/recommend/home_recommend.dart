@@ -21,31 +21,65 @@ class HomeRecommendView extends StatefulWidget {
   }
 }
 
-class _HomeRecommendState extends State<HomeRecommendView> implements HomeRecommendContract {
+class _HomeRecommendState extends State<HomeRecommendView>
+    with WidgetsBindingObserver
+    implements HomeRecommendContract {
   HomeRecommendPresenter presenter;
-  var triggerLoad = true;
-  int start = 0;
-  int count = 40;
+  var loading = false;
 
-  List<RecommendFeedItem> recommendFeedItems = List<RecommendFeedItem>();
+  RefreshIndicator _refreshIndicator;
+  GlobalKey<RefreshIndicatorState> refreshIndicatorStateKey =
+      new GlobalKey<RefreshIndicatorState>();
+
+  List<RecommendFeedItemModel> _recommendFeedItemModels = List<RecommendFeedItemModel>();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    // 下拉刷新
+    _refreshIndicator = RefreshIndicator(
+      key: refreshIndicatorStateKey,
+      color: Theme.of(context).accentColor,
+      displacement: 40,
+      onRefresh: () {
+        return refreshData();
+      },
+      // 展示列表
       child: ListView.separated(
-        itemBuilder: (context, index) => recommendFeedItems[index],
+        itemBuilder: (context, index) {
+          final model = _recommendFeedItemModels[index] ?? null;
+          if (model != null) {
+            return RecommendFeedItemWidget(model);
+          }
+          return null;
+        },
         separatorBuilder: (context, index) => Container(
           margin: EdgeInsets.fromLTRB(0, 4, 0, 4),
         ),
-        itemCount: recommendFeedItems.length,
+        itemCount: _recommendFeedItemModels?.length ?? 0,
       ),
     );
+
+    return _refreshIndicator;
+  }
+
+  @override
+  void didUpdateWidget(HomeRecommendView oldWidget) {
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
   void initState() {
     super.initState();
-    presenter = HomeRecommendPresenter(this);
+    // build 完成后
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      // 显示loading，加载数据
+      refreshIndicatorStateKey.currentState?.show();
+    });
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
   }
 
   @override
@@ -54,31 +88,41 @@ class _HomeRecommendState extends State<HomeRecommendView> implements HomeRecomm
     presenter.clear();
   }
 
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-    // 获取feed数据
-    await presenter.getRecommendFeedItemsData(start, count);
-  }
-
-  List<RecommendFeedItem> _buildRecommendFeedItem(List<RecommendFeedItemModel> items) {
-    final itemWidgets = List<RecommendFeedItem>();
-    for (var item in items) {
-      itemWidgets.add(RecommendFeedItem(item));
+  Future<void> refreshData() async {
+    if (loading) {
+      return Future.value();
     }
-    return itemWidgets;
+    if (presenter == null) {
+      presenter = HomeRecommendPresenter(this);
+    }
+    setState(() {
+      loading = true;
+    });
+    // 获取feed数据
+    return presenter.getRecommendFeedItemsData();
   }
 
   @override
-  Future<void> onHomeRecommendDataReceived(List<RecommendFeedItemModel> items) async {
-    final widgets = await Future.microtask(() => _buildRecommendFeedItem(items));
+  Future<void> onHomeRecommendDataReceived(List<RecommendFeedItemModel> items, String msg) async {
+    // Toast
+    Fluttertoast.showToast(
+        msg: msg,
+        backgroundColor: Theme.of(context).accentColor,
+        textColor: Colors.white,
+        gravity: ToastGravity.TOP);
     setState(() {
-      recommendFeedItems = widgets;
+      loading = false;
+      _recommendFeedItemModels = items;
     });
   }
 
   @override
   void onHomeRecommendError(ApiError error) {
     print(error.msg);
+    Fluttertoast.showToast(
+        msg: error.msg, backgroundColor: Colors.redAccent, toastLength: Toast.LENGTH_LONG);
+    setState(() {
+      loading = false;
+    });
   }
 }

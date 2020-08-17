@@ -11,6 +11,7 @@ dependencies:
   flutter:
     sdk: flutter
   connectivity: 0.4.9 # 网络链接
+  fluttertoast: ^7.0.2 # Toast
 
 dev_dependencies:
   flutter_test:

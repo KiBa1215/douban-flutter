@@ -24,24 +24,22 @@ class RecommendFeedItemModel {
   );
 }
 
-class RecommendFeedItem extends StatefulWidget {
-  RecommendFeedItem(this.item);
+class RecommendFeedItemWidget extends StatefulWidget {
+  RecommendFeedItemWidget(this.item);
 
   final RecommendFeedItemModel item;
 
   @override
   State<StatefulWidget> createState() {
-    return _RecommendFeedItemState(item);
+    return _RecommendFeedItemWidgetState();
   }
 }
 
-class _RecommendFeedItemState extends State<RecommendFeedItem> {
-  final RecommendFeedItemModel item;
-
-  _RecommendFeedItemState(this.item);
+class _RecommendFeedItemWidgetState extends State<RecommendFeedItemWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final RecommendFeedItemModel _item = widget.item;
     return Container(
       color: Theme.of(context).primaryColor,
       padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -49,14 +47,19 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _headerItem(item),
-          _topicItem(item),
-          _bodyItem(item),
-          _imagesItem(item),
-          _likeCommentSharingItems(item),
+          _headerItem(_item),
+          _topicItem(_item),
+          _bodyItem(_item),
+          _imagesItem(_item),
+          _likeCommentSharingItems(_item),
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   /// header 部分
@@ -154,10 +157,7 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
     if (content.title != null) {
       titleSpan = TextSpan(
           text: content.title,
-          style: Theme.of(context)
-              .textTheme
-              .bodyText2
-              .copyWith(fontWeight: FontWeight.bold),
+          style: Theme.of(context).textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold),
           children: <InlineSpan>[TextSpan(text: "  ")]);
     }
     // 正文
@@ -165,6 +165,11 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
     if (content.contentAbstract != null) {
       abstractSpan = TextSpan(
         text: content.contentAbstract,
+        style: Theme.of(context).textTheme.bodyText2,
+      );
+    } else {
+      abstractSpan = TextSpan(
+        text: content.status.text,
         style: Theme.of(context).textTheme.bodyText2,
       );
     }
@@ -221,21 +226,9 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
   /// 点赞 评论 转发
   Widget _likeCommentSharingItems(RecommendFeedItemModel item) {
     final items = [
-      {
-        'icon': Icons.thumb_up,
-        'count': item.reactionCount.toString(),
-        'color': Colors.black45
-      },
-      {
-        'icon': Icons.forum,
-        'count': item.commentCount.toString(),
-        'color': Colors.black45
-      },
-      {
-        'icon': Icons.share,
-        'count': item.reactionCount.toString(),
-        'color': Colors.black45
-      },
+      {'icon': Icons.thumb_up, 'count': item.reactionCount.toString(), 'color': Colors.black45},
+      {'icon': Icons.forum, 'count': item.commentCount.toString(), 'color': Colors.black45},
+      {'icon': Icons.share, 'count': item.reactionCount.toString(), 'color': Colors.black45},
     ];
     List<Widget> buttons = List<Widget>();
     for (var i = 0; i < 3; i++) {
@@ -253,10 +246,7 @@ class _RecommendFeedItemState extends State<RecommendFeedItem> {
               padding: EdgeInsets.fromLTRB(1, 0, 0, 0),
               child: Text(
                 items[i]['count'] == null ? '' : items[i]['count'],
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyText1
-                    .copyWith(color: items[i]['color']),
+                style: Theme.of(context).textTheme.bodyText1.copyWith(color: items[i]['color']),
               ),
             )
           ],
