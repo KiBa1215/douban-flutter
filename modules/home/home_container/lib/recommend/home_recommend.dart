@@ -25,7 +25,9 @@ class _HomeRecommendState extends State<HomeRecommendView>
     with WidgetsBindingObserver
     implements HomeRecommendContract {
   HomeRecommendPresenter presenter;
-  var loading = false;
+
+  var refreshing = false;
+  var loadingMore = false;
 
   RefreshIndicator _refreshIndicator;
   GlobalKey<RefreshIndicatorState> refreshIndicatorStateKey = GlobalKey<RefreshIndicatorState>();
@@ -33,7 +35,8 @@ class _HomeRecommendState extends State<HomeRecommendView>
   List<RecommendFeedItemModel> _recommendFeedItemModels = List<RecommendFeedItemModel>();
 
   HeaderFooterListView body() {
-    return HeaderFooterListView(
+    final _controller = ScrollController();
+    final listView = HeaderFooterListView(
       data: _recommendFeedItemModels,
       itemBuilder: (context, index) {
         final model = _recommendFeedItemModels[index] ?? null;
@@ -47,8 +50,21 @@ class _HomeRecommendState extends State<HomeRecommendView>
           margin: EdgeInsets.fromLTRB(0, 4, 0, 4),
         );
       },
-      footerList: [Loading()],
+      controller: _controller,
+      footerList: loadingMore ? [Loading()] : null,
     );
+
+    // 滑动到四分之三，加载更多
+    _controller.addListener(() {
+      if (loadingMore) {
+        return;
+      }
+      final offset = _controller.offset;
+      if (offset > _controller.position.maxScrollExtent * 0.75) {
+        loadMore();
+      }
+    });
+    return listView;
   }
 
   @override
@@ -56,16 +72,13 @@ class _HomeRecommendState extends State<HomeRecommendView>
     // 下拉刷新
     _refreshIndicator = RefreshIndicator(
         key: refreshIndicatorStateKey,
-        color: Theme
-            .of(context)
-            .accentColor,
+        color: Theme.of(context).accentColor,
         displacement: 40,
         onRefresh: () {
           return refreshData();
         },
         // 展示列表
-        child: body()
-    );
+        child: body());
 
     return _refreshIndicator;
   }
@@ -97,17 +110,32 @@ class _HomeRecommendState extends State<HomeRecommendView>
   }
 
   Future<void> refreshData() async {
-    if (loading) {
+    if (refreshing) {
       return Future.value();
     }
     if (presenter == null) {
       presenter = HomeRecommendPresenter(this);
     }
     setState(() {
-      loading = true;
+      refreshing = true;
     });
     // 获取feed数据
     return presenter.refresh();
+  }
+
+  Future<void> loadMore() async {
+    if (loadingMore) {
+      return Future.value();
+    }
+    if (presenter == null) {
+      presenter = HomeRecommendPresenter(this);
+    }
+    setState(() {
+      loadingMore = true;
+    });
+    print('loading more moremoremoremoremore......');
+    // 获取feed数据
+    return presenter.loadMoreRecommendFeedItems();
   }
 
   @override
@@ -115,13 +143,12 @@ class _HomeRecommendState extends State<HomeRecommendView>
     // Toast
     Fluttertoast.showToast(
         msg: msg,
-        backgroundColor: Theme
-            .of(context)
-            .accentColor,
+        backgroundColor: Theme.of(context).accentColor,
         textColor: Colors.white,
         gravity: ToastGravity.TOP);
     setState(() {
-      loading = false;
+      refreshing = false;
+      loadingMore = false;
       _recommendFeedItemModels = items;
       _recommendFeedItemModels.add(null);
     });
@@ -133,10 +160,17 @@ class _HomeRecommendState extends State<HomeRecommendView>
     Fluttertoast.showToast(
         msg: error.msg, backgroundColor: Colors.redAccent, toastLength: Toast.LENGTH_LONG);
     setState(() {
-      loading = false;
+      refreshing = false;
+      loadingMore = false;
     });
   }
 
   @override
-  void onLoadMoreHomeRecommendData(List<RecommendFeedItemModel> items, String msg) {}
+  void onLoadMoreHomeRecommendData(List<RecommendFeedItemModel> items, String msg) {
+    setState(() {
+      refreshing = false;
+      loadingMore = false;
+      _recommendFeedItemModels.addAll(items);
+    });
+  }
 }
