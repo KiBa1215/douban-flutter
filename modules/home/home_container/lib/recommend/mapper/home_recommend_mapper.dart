@@ -9,7 +9,7 @@ class HomeRecommendFeedMapper {
     // 配图
     List<String> photos = _mapImages(item);
 
-    return RecommendFeedItemModel.name(
+    return RecommendFeedItemModel.create(
       avatar,
       authorName,
       item.type,

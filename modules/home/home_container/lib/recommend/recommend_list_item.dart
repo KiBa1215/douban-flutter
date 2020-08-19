@@ -11,7 +11,7 @@ class RecommendFeedItemModel {
   int commentCount;
   int shareCount;
 
-  RecommendFeedItemModel.name(
+  RecommendFeedItemModel.create(
     this.avatarUrl,
     this.authorName,
     this.articleType,
@@ -36,7 +36,6 @@ class RecommendFeedItemWidget extends StatefulWidget {
 }
 
 class _RecommendFeedItemWidgetState extends State<RecommendFeedItemWidget> {
-
   @override
   Widget build(BuildContext context) {
     final RecommendFeedItemModel _item = widget.item;
@@ -216,7 +215,7 @@ class _RecommendFeedItemWidgetState extends State<RecommendFeedItemWidget> {
           crossAxisSpacing: 2,
         ),
         children: images,
-        shrinkWrap: true, //
+        shrinkWrap: true, // 该属性表示是否根据子组件的总长度来设置 GridView 的长度
         physics: NeverScrollableScrollPhysics(), // 无法滚动
       );
     }

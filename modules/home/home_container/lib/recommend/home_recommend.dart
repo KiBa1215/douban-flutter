@@ -28,35 +28,43 @@ class _HomeRecommendState extends State<HomeRecommendView>
   var loading = false;
 
   RefreshIndicator _refreshIndicator;
-  GlobalKey<RefreshIndicatorState> refreshIndicatorStateKey =
-      new GlobalKey<RefreshIndicatorState>();
+  GlobalKey<RefreshIndicatorState> refreshIndicatorStateKey = GlobalKey<RefreshIndicatorState>();
 
   List<RecommendFeedItemModel> _recommendFeedItemModels = List<RecommendFeedItemModel>();
+
+  HeaderFooterListView body() {
+    return HeaderFooterListView(
+      data: _recommendFeedItemModels,
+      itemBuilder: (context, index) {
+        final model = _recommendFeedItemModels[index] ?? null;
+        if (model != null) {
+          return RecommendFeedItemWidget(model);
+        }
+        return SizedBox();
+      },
+      separatorBuilder: (context, index) {
+        return Container(
+          margin: EdgeInsets.fromLTRB(0, 4, 0, 4),
+        );
+      },
+      footerList: [Loading()],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     // 下拉刷新
     _refreshIndicator = RefreshIndicator(
-      key: refreshIndicatorStateKey,
-      color: Theme.of(context).accentColor,
-      displacement: 40,
-      onRefresh: () {
-        return refreshData();
-      },
-      // 展示列表
-      child: ListView.separated(
-        itemBuilder: (context, index) {
-          final model = _recommendFeedItemModels[index] ?? null;
-          if (model != null) {
-            return RecommendFeedItemWidget(model);
-          }
-          return null;
+        key: refreshIndicatorStateKey,
+        color: Theme
+            .of(context)
+            .accentColor,
+        displacement: 40,
+        onRefresh: () {
+          return refreshData();
         },
-        separatorBuilder: (context, index) => Container(
-          margin: EdgeInsets.fromLTRB(0, 4, 0, 4),
-        ),
-        itemCount: _recommendFeedItemModels?.length ?? 0,
-      ),
+        // 展示列表
+        child: body()
     );
 
     return _refreshIndicator;
@@ -99,7 +107,7 @@ class _HomeRecommendState extends State<HomeRecommendView>
       loading = true;
     });
     // 获取feed数据
-    return presenter.getRecommendFeedItemsData();
+    return presenter.refresh();
   }
 
   @override
@@ -107,12 +115,15 @@ class _HomeRecommendState extends State<HomeRecommendView>
     // Toast
     Fluttertoast.showToast(
         msg: msg,
-        backgroundColor: Theme.of(context).accentColor,
+        backgroundColor: Theme
+            .of(context)
+            .accentColor,
         textColor: Colors.white,
         gravity: ToastGravity.TOP);
     setState(() {
       loading = false;
       _recommendFeedItemModels = items;
+      _recommendFeedItemModels.add(null);
     });
   }
 
@@ -125,4 +136,7 @@ class _HomeRecommendState extends State<HomeRecommendView>
       loading = false;
     });
   }
+
+  @override
+  void onLoadMoreHomeRecommendData(List<RecommendFeedItemModel> items, String msg) {}
 }

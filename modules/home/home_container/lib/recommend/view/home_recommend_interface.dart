@@ -7,4 +7,5 @@ abstract class HomeRecommendContract {
 
   void onHomeRecommendError(ApiError error);
 
+  void onLoadMoreHomeRecommendData(List<RecommendFeedItemModel> items, String msg);
 }

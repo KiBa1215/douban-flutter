@@ -1,8 +1,8 @@
 part of '../home_recommend.dart';
 
 class HomeRecommendPresenter {
-  int start = 0;
-  static const int count = 40;
+  int _start = 0;
+  static const int COUNT = 20;
 
   HomeRecommendContract contract;
 
@@ -10,11 +10,10 @@ class HomeRecommendPresenter {
 
   final homeRecommendService = HomeRecommendService();
 
-  Future<void> getRecommendFeedItemsData({
+  Future<void> _getRecommendFeedItemsData({
     int start = 0,
-    int count = count,
   }) async {
-    final response = await homeRecommendService.getRecommendFeedItemsData(start, count);
+    final response = await homeRecommendService.getRecommendFeedItemsData(start, COUNT);
     if (response.isSuccessful) {
       var feedData = response.data;
       List<RecommendFeedItemModel> models = await Future(() {
@@ -26,10 +25,24 @@ class HomeRecommendPresenter {
             .toList();
         return items;
       });
-      contract?.onHomeRecommendDataReceived(models, response.data.toast);
+      if (start == 0) {
+        contract?.onHomeRecommendDataReceived(models, response.data.toast);
+      } else {
+        contract?.onLoadMoreHomeRecommendData(models, response.data.toast);
+      }
+      // 更新start的index
+      _start += COUNT;
     } else {
       contract?.onHomeRecommendError(response.error);
     }
+  }
+
+  Future<void> refresh() {
+    return _getRecommendFeedItemsData(start: 0);
+  }
+  
+  Future<void> loadMoreRecommendFeedItems() {
+    return _getRecommendFeedItemsData(start: _start);
   }
 
   void clear() {
