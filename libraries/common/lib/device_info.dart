@@ -1,5 +1,5 @@
 
-part of 'common.dart';
+import 'dart:io';
 
 class DeviceInfo {
 

@@ -13,27 +13,31 @@ class HomeRecommendPresenter {
   Future<void> _getRecommendFeedItemsData({
     int start = 0,
   }) async {
-    final response = await homeRecommendService.getRecommendFeedItemsData(start, COUNT);
-    if (response.isSuccessful) {
-      var feedData = response.data;
-      List<RecommendFeedItemModel> models = await Future(() {
-        // 过滤无效数据
-        feedData.items = feedData.items.where((element) => element.showActions).toList();
-        // 数据转换
-        List<RecommendFeedItemModel> items = feedData.items
-            .map((item) => HomeRecommendFeedMapper.toRecommendFeedItemModel(item))
-            .toList();
-        return items;
-      });
-      if (start == 0) {
-        contract?.onHomeRecommendDataReceived(models, response.data.toast);
+    try {
+      final response = await homeRecommendService.getRecommendFeedItemsData(start, COUNT);
+      if (response.isSuccessful) {
+        var feedData = response.data;
+        List<RecommendFeedItemModel> models = await Future(() {
+          // 过滤无效数据
+          feedData.items = feedData.items.where((element) => element.showActions).toList();
+          // 数据转换
+          List<RecommendFeedItemModel> items = feedData.items
+              .map((item) => HomeRecommendFeedMapper.toRecommendFeedItemModel(item))
+              .toList();
+          return items;
+        });
+        if (start == 0) { // start == 0 刷新操作
+          contract?.onHomeRecommendDataReceived(models, response.data.toast);
+        } else { // 加载更多
+          contract?.onLoadMoreHomeRecommendData(models, response.data.toast);
+        }
+        // 更新start的index
+        _start += COUNT;
       } else {
-        contract?.onLoadMoreHomeRecommendData(models, response.data.toast);
+        contract?.onHomeRecommendError(response.error);
       }
-      // 更新start的index
-      _start += COUNT;
-    } else {
-      contract?.onHomeRecommendError(response.error);
+    } on Exception catch (e) {
+      contract?.onHomeRecommendError(ApiError(msg: e.toString()));
     }
   }
 

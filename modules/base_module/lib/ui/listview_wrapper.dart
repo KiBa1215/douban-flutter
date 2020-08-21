@@ -93,6 +93,10 @@ class HeaderFooterListViewState<T> extends State<HeaderFooterListView> {
         if (dataWrapper[index] == null) {
           return SizedBox();
         }
+        if (index > 0 && hasHeader) {
+          // 减去header的占位
+          index --;
+        }
         return widget.itemBuilder.call(context, index);
       },
       // 分割线builder

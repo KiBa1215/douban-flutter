@@ -5,6 +5,7 @@ final _gatewayHttpClient = _GatewayHttpClient();
 final httpClient = _gatewayHttpClient;
 
 class _GatewayHttpClient {
+
   static final _localProxyIPAddress = "192.168.13.65";
   static final _localProxyPort = "8888";
 
@@ -12,7 +13,11 @@ class _GatewayHttpClient {
 
   _GatewayHttpClient() {
     dio = Dio(_options());
-    setProxy();
+
+    /*** 如不需要抓包，注释下面的代码*/
+//    if (AppConfig.isDebug()) {
+//      setProxy(); // debug 模式下设置代理抓包
+//    }
   }
 
   BaseOptions _options() => BaseOptions(
@@ -160,7 +165,8 @@ class _GatewayHttpClient {
     final isOnline = await NetworkUtil.isOnline();
     if (!isOnline) {
       return ApiResult(
-        error: ApiError(msg: '网络未连接', localizedMessage: '网络未连接', code: -1, request: '$method: $path'),
+        error:
+            ApiError(msg: '网络未连接', localizedMessage: '网络未连接', code: -1, request: '$method: $path'),
       );
     }
 
@@ -200,7 +206,8 @@ class _GatewayHttpClient {
     } on Exception catch (e) {
       // 其他错误
       return ApiResult(
-        error: ApiError(msg: e.toString(), localizedMessage: e.toString(), code: -1, request: '$method: $path'),
+        error: ApiError(
+            msg: e.toString(), localizedMessage: e.toString(), code: -1, request: '$method: $path'),
       );
     }
   }

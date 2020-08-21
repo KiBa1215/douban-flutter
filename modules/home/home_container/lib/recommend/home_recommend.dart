@@ -54,13 +54,13 @@ class _HomeRecommendState extends State<HomeRecommendView>
       footerList: loadingMore ? [Loading()] : null,
     );
 
-    // 滑动到四分之三，加载更多
+    // 滑动到整个页面的0.9处，加载更多
     _controller.addListener(() {
       if (loadingMore) {
         return;
       }
       final offset = _controller.offset;
-      if (offset > _controller.position.maxScrollExtent * 0.75) {
+      if (offset > _controller.position.maxScrollExtent * 0.9) {
         loadMore();
       }
     });
@@ -133,7 +133,6 @@ class _HomeRecommendState extends State<HomeRecommendView>
     setState(() {
       loadingMore = true;
     });
-    print('loading more moremoremoremoremore......');
     // 获取feed数据
     return presenter.loadMoreRecommendFeedItems();
   }
@@ -150,7 +149,6 @@ class _HomeRecommendState extends State<HomeRecommendView>
       refreshing = false;
       loadingMore = false;
       _recommendFeedItemModels = items;
-      _recommendFeedItemModels.add(null);
     });
   }
 
