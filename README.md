@@ -1,16 +1,9 @@
-# douban
+# Flutter版仿豆瓣APP
 
-A douban client based on Flutter
+模仿豆瓣App，使用Flutter实现。使用线上生产数据进行开发，仅供学习交流使用。
 
-## Getting Started
+## 截图-Screenshot
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Home                           |
+| ------------------------------ |
+| <img src="./screenshots/home.gif"/>|
