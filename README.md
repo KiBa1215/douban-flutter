@@ -6,4 +6,4 @@
 
 | Home                           |
 | ------------------------------ |
-| <img src="./screenshots/home.gif"/>|
+| ![home](https://raw.githubusercontent.com/KiBa1215/flutter-douban/develop/screeshots/home.gif)|
